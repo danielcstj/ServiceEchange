@@ -3,11 +3,11 @@ import express from 'express';
 import dayjs from 'dayjs';
 import planetsRoutes from './routes/planets.routes.js';
 import methodMiddleware from './middlewares/method.js';
-import errorMiddleware from './middlewares/errors.js';
+import errorMiddleware from './middlewares/error.js';
 
 
 const app = express();
-app.use()
+app.use(methodMiddleware);
 
 app.use(planetsRoutes);
 
@@ -74,7 +74,7 @@ app.get('/date', (req,res)=>{
 
 app.get('/table/:nombre', (req,res)=>{
 
-    var nombre = (+req.query.nombre)
+    var nombre = parseInt(req.params.nombre,10);
    // nombre = req.params.nombre;
     //console.log(req.query);
    /* const a = parseInt(req.query.a,10);
