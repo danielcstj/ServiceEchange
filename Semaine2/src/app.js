@@ -1,9 +1,15 @@
 import express from 'express';
 
 import dayjs from 'dayjs';
+import planetsRoutes from './routes/planets.routes.js';
+import methodMiddleware from './middlewares/method.js';
+import errorMiddleware from './middlewares/errors.js';
 
 
 const app = express();
+app.use()
+
+app.use(planetsRoutes);
 
 app.get('/premiere',(req,res) => {
 
@@ -66,4 +72,29 @@ app.get('/date', (req,res)=>{
 
 });
 
+app.get('/table/:nombre', (req,res)=>{
+
+    var nombre = (+req.query.nombre)
+   // nombre = req.params.nombre;
+    //console.log(req.query);
+   /* const a = parseInt(req.query.a,10);
+    const b = parseInt(req.query.b,10);*/
+    
+    var result =0;
+
+    for(var i=1;i<= 10; i++){
+        result= nombre*i;
+        console.log(nombre + " * "+ i+ " = "+ result);
+    }
+    
+   
+   
+   // const somme = a + b;
+   res.status(200);
+   res.set('Content-Type', 'text/html');
+   res.send(`<b>${result}</b>`);
+
+
+});
+app.use(errorMiddleware);
 export default app;
