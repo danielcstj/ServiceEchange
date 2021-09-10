@@ -4,10 +4,14 @@ import dayjs from 'dayjs';
 import planetsRoutes from './routes/planets.routes.js';
 import methodMiddleware from './middlewares/method.js';
 import errorMiddleware from './middlewares/error.js';
+import elementsRoutes from './routes/elements.routes.js';
 
 
 const app = express();
+app.use(express.json());
 app.use(methodMiddleware);
+app.use('/planets',planetsRoutes);
+app.use('/elements', elementsRoutes);
 
 app.use(planetsRoutes);
 
