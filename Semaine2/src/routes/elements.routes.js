@@ -1,6 +1,7 @@
 import express from 'express';
-import HttpErrors from 'http-errors';
+import HttpError from 'http-errors';
 import ELEMENTS from '../data/elements.js'
+import HttpStatus from 'http-status';
 
 const router = express.Router();
 
@@ -47,11 +48,34 @@ class ElementsRoutes {
 }
 
     post(req, res, next) {
+        const newElement = req.body;
+        const element = ELEMENTS.find(p => p.symbol == newElement.symbol);
+
+        if(element){
+            //Doublon detected
+            return next(HttpError.Conflict(`L'element  avec le symbole ${newElement.symbol} existe déjà`));
+
+        }else{
+            ELEMENTS.push(newElement);
+            res.status(HttpStatus.CREATED).json(newElement);
+
+        }
+
+
+        ELEMENTS.push(newElement);        
 
         
     }
     
     delete(req, res, next) {
+        const index = ELEMENTS.findIndex(p=>p.symbol == req.params.symbol);
+        if(index===-1){
+            return next(HttpError.NotFound(`L'élement avec le symbole ${newElement.symbol} n'existe pas`))
+        }else{
+            ELEMENTS.splice(index,1);
+            res.status(204).end();
+            console.log('delete methode');
+        }
      
     }
 }
