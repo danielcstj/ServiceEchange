@@ -45,6 +45,7 @@ class PlanetsRoutes{
     }
     delete(req,res,next){
        const index = PLANETS.findIndex(p=>p.id == req.params.idPlanet);
+       const newPlanet = req.body;
        if(index===-1){
            return next(HttpError.NotFound(`La planète avec l'identifiant ${newPlanet.id} n'existe pas`))
        }else{
