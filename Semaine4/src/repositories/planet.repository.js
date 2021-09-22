@@ -1,4 +1,5 @@
 import Planet from '../models/planet.model.js';
+const ZERO_KELVIN =-273.15;
 class PlanetRepository{
     retrieveById(idPlanet){
         return Planet.findById(idPlanet);
@@ -12,6 +13,7 @@ class PlanetRepository{
             temperature:{$gt:240},
             'position.y':{$lte:500}
         }
+       
 
         const testFilter2 = {
             $or:[{discoveredBy:'Skadex'},
@@ -20,6 +22,21 @@ class PlanetRepository{
 
 
         return Planet.find(filter);
+    }
+    create(planet){
+        return Planet.create(planet);
+    }
+    transform(planet,transformOptions ={}){
+        if(transformOptions){
+            if(transformOptions.unit ==='c'){
+                planet.temperature +=ZERO_KELVIN;
+                planet.temperature = parseFloat(planet.temperature.toFixed(2));
+            }
+        }
+        delete planet.__v;
+
+        
+        return planet;
     }
 }
 

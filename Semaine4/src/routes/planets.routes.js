@@ -19,22 +19,24 @@ class PlanetsRoutes{
 
     }
 
-    post(req,res,next){
+   async post(req,res,next){
         const newPlanet = req.body;
-        const planet = PLANETS.find(p => p.id == newPlanet.id);
+       
 
-        if(planet){
-            //Doublon detected
-            return next(HttpError.Conflict(`La planète avec l'identifiant ${newPlanet.id} existe déjà`));
-
-        }else{
-            PLANETS.push(newPlanet);
+        
             res.status(HttpStatus.CREATED).json(newPlanet);
 
-        }
+            try {
+                const planetAdded = await planetRepository.create(newPlanet);
+                planetAdded = planetAdded.toObject({getters:false,virtuals:false});
+                planetAdded =planetRepository.transform(planetAdded);
+                res.status(201).json(planetAdded);
 
+            }catch(err){
+                return next(err);
 
-        PLANETS.push(newPlanet);
+            }
+
     }
     patch(req,res,next){
         return next(HttpError.NoImplemented());
@@ -61,9 +63,24 @@ class PlanetsRoutes{
       {
           filter.discoveredBy = req.query.explorer;
       }
+      const transformOptions ={};
+      if(req.query.unit){
+          const unit = req.query.unit;
+          if(unit === 'c'){
+              transformOptions.unit =unit;
+          }else{
+              return next(HttpError.BadRequest('le parametre unit doit avoir la valeur c pour celsius'));
+          }
+      }
 
        try{
-           const planets = await planetRepository.retrieveAll(filter);
+           let planets = await planetRepository.retrieveAll(filter);
+           planets = planets.map(p => {
+               p = p.toObject({getters:false,virtuals:false});
+               p = planetRepository.transform(p,transformOptions);
+               return p;
+           });
+
            res.status(200).json(planets);
 
        }catch(err){
@@ -86,10 +103,22 @@ class PlanetsRoutes{
             
          
         }*/
+
+        const transformOptions ={};
+      if(req.query.unit){
+          const unit = req.query.unit;
+          if(unit === 'c'){
+              transformOptions.unit =unit;
+          }else{
+              return next(HttpError.BadRequest('le parametre unit doit avoir la valeur c pour celsius'));
+          }
+      }
         try{
-        const planet = await planetRepository.retrieveById(idPlanet);
+        let planet = await planetRepository.retrieveById(idPlanet);
         //J'ai une planete
         if(planet){
+            planet = planet.toObject({getters:false,virtuals:false});
+            planet =planetRepository.transform(planet,transformOptions);
             res.status(200).json(planet);
         }else{ 
         return next(HttpError.NotFound(`La planete ${idPlanet} n'existe pas`));
