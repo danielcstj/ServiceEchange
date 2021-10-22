@@ -27,7 +27,20 @@ async function getPlanet(href){
         $('#lblName').html(planet.name);
         $('#lblDiscoveredBy').html(planet.discoveredBy);
         $('#lblTemperature').html(planet.temperature);
-        $('#lblPosition').html(`(${planet.position.x.toFixed(3)}; ${planet.position.y.toFixed(3)};${planet.position.x.toFixed(3)}`);
+        const position=(`(${planet.position.x.toFixed(3)}; ${planet.position.y.toFixed(3)};${planet.position.x.toFixed(3)}`);
+        $('#lblPosition').html(position);
+
+         //satellites
+
+         if(planet.satellites.length===0){
+            $('#satellites').append(`<li>Aucun satellite</li>`);
+
+         }else{
+            planet.satellites.forEach(s=>{
+                $('#satellites').append(`<li>${s}</li>`);
+            });
+         }
+       
 
 
 
